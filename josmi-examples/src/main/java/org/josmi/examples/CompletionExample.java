@@ -79,6 +79,9 @@ public class CompletionExample {
                 System.out.println("Metadata: " + response.getMetadata());
             }
 
+            // Close the scanner when done
+            scanner.close();
+            
             // Close the service when done
             service.close();
 

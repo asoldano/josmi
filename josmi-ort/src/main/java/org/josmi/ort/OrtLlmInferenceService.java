@@ -1,13 +1,9 @@
 package org.josmi.ort;
 
-import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
-import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
 import ai.onnxruntime.genai.SimpleGenAI;
 import ai.onnxruntime.genai.GeneratorParams;
-import ai.onnxruntime.genai.Model;
-import ai.onnxruntime.genai.Tokenizer;
 import ai.onnxruntime.genai.GenAIException;
 import org.josmi.api.AbstractLlmInferenceService;
 import org.josmi.api.LlmInferenceException;
@@ -22,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +33,8 @@ public class OrtLlmInferenceService extends AbstractLlmInferenceService {
     private final OrtEnvironment environment;
     private OrtSession session;
     private SimpleGenAI simpleGenAI;
-    private Model model;
-    private Tokenizer tokenizer;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private final String modelPath;
-    private final String tokenizerPath;
 
     /**
      * Constructs a new OrtLlmInferenceService with the specified configuration.
@@ -56,7 +48,6 @@ public class OrtLlmInferenceService extends AbstractLlmInferenceService {
         try {
             this.environment = OrtEnvironment.getEnvironment();
             this.modelPath = getConfigString(LlmConfig.MODEL_PATH, null);
-            this.tokenizerPath = getConfigString(LlmConfig.TOKENIZER_PATH, null);
             
             if (modelPath == null) {
                 throw new LlmInferenceException("Model path is required");
@@ -95,12 +86,7 @@ public class OrtLlmInferenceService extends AbstractLlmInferenceService {
             session = environment.createSession(modelFilePath.toString(), sessionOptions);
             
             // Initialize SimpleGenAI
-            if (tokenizerPath != null) {
-                Path tokenizerFilePath = Paths.get(tokenizerPath);
-                simpleGenAI = new SimpleGenAI(modelPath);
-            } else {
-                simpleGenAI = new SimpleGenAI(modelPath);
-            }
+            simpleGenAI = new SimpleGenAI(modelPath);
             
             initialized.set(true);
             ready = true;

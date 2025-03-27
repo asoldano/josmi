@@ -6,11 +6,9 @@ import org.josmi.api.model.ChatRequest;
 import org.josmi.api.model.CompletionRequest;
 import org.josmi.api.model.Message;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * DTO for requests to the DJL Serving backend.
