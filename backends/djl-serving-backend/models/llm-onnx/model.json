@@ -1,0 +1,58 @@
+{
+  "modelName": "llm-onnx",
+  "modelVersion": "1.0",
+  "engine": "OnnxRuntime",
+  "application": "llm",
+  "options": {
+    "mapInputNames": "input_ids,attention_mask",
+    "mapOutputNames": "logits",
+    "optLevel": 99,
+    "interOpNumThreads": 1,
+    "intraOpNumThreads": 4
+  },
+  "translatorFactory": "ai.djl.onnxruntime.zoo.OrtTranslatorFactory",
+  "inputs": [
+    {
+      "name": "data",
+      "description": "Input text for the model"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "data",
+      "description": "Generated text from the model"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "temperature",
+      "type": "float",
+      "description": "Controls randomness in the output. Higher values (e.g., 0.8) make the output more random, lower values (e.g., 0.2) make it more deterministic.",
+      "defaultValue": 0.7
+    },
+    {
+      "name": "max_tokens",
+      "type": "int",
+      "description": "The maximum number of tokens to generate.",
+      "defaultValue": 1024
+    },
+    {
+      "name": "top_p",
+      "type": "float",
+      "description": "Controls diversity via nucleus sampling. Top-p of 0.9 means only considering the top 90% most likely next tokens.",
+      "defaultValue": 1.0
+    },
+    {
+      "name": "top_k",
+      "type": "int",
+      "description": "Controls diversity by limiting to the top k most likely next tokens.",
+      "defaultValue": 50
+    },
+    {
+      "name": "repetition_penalty",
+      "type": "float",
+      "description": "Penalizes repetition in the output.",
+      "defaultValue": 1.0
+    }
+  ]
+}
