@@ -25,6 +25,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <surefire.jdwp.args>-Xdebug -Xcheck:jni -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005</surefire.jdwp.args>
+        <surefire.jvm.args></surefire.jvm.args>
         
         <!-- Dependency versions -->
         <onnxruntime.version>1.20.0</onnxruntime.version>
@@ -187,4 +189,22 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <!--
+            Name:  debug
+            Descr: Enable remote debuging for tests
+        -->
+        <profile>
+            <id>debug</id>
+            <activation>
+                <property>
+                    <name>debug</name>
+                </property>
+            </activation>
+            <properties>
+                <surefire.jvm.args>${surefire.jdwp.args}</surefire.jvm.args>
+            </properties>
+        </profile>
+    </profiles>
 </project>
