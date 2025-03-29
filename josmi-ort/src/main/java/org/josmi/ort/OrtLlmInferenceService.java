@@ -35,6 +35,7 @@ public class OrtLlmInferenceService extends AbstractLlmInferenceService {
     private SimpleGenAI simpleGenAI;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private final String modelPath;
+    private final String modelID;
 
     /**
      * Constructs a new OrtLlmInferenceService with the specified configuration.
@@ -48,9 +49,13 @@ public class OrtLlmInferenceService extends AbstractLlmInferenceService {
         try {
             this.environment = OrtEnvironment.getEnvironment();
             this.modelPath = getConfigString(LlmConfig.MODEL_PATH, null);
+            this.modelID = getConfigString(LlmConfig.MODEL_ID, null);
             
             if (modelPath == null) {
                 throw new LlmInferenceException("Model path is required");
+            }
+            if (modelID == null) {
+                throw new LlmInferenceException("Model id (.onnx filename) is required");
             }
             
             initialize();
@@ -82,7 +87,7 @@ public class OrtLlmInferenceService extends AbstractLlmInferenceService {
             }
             
             // Load the model
-            Path modelFilePath = Paths.get(modelPath);
+            Path modelFilePath = Paths.get(modelPath, modelID);
             session = environment.createSession(modelFilePath.toString(), sessionOptions);
             
             // Initialize SimpleGenAI
@@ -116,7 +121,10 @@ public class OrtLlmInferenceService extends AbstractLlmInferenceService {
             
             // Generate response
             StringBuilder generatedText = new StringBuilder();
-            simpleGenAI.generate(params, token -> generatedText.append(token));
+            simpleGenAI.generate(params, token -> {
+                generatedText.append(token);
+                System.out.println("** token:" + token);
+            });
             String result = generatedText.toString();
             
             // Create response
